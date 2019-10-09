@@ -12,7 +12,7 @@ namespace WeatherRoutingBackend.Controllers
     [Route("[controller]")]
     public class RoutingController : ControllerBase
     {
-        static readonly HttpClient client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
+        private static readonly HttpClient Client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
 
         [HttpGet]
         [Route("{startLat}/{startLng}/{endLat}/{endLng}")]
@@ -21,7 +21,7 @@ namespace WeatherRoutingBackend.Controllers
             var key = "dzTX2x3ocGZPLzhVGol51CtFKBX7hD63";
 
             HttpResponseMessage response =
-                await client.GetAsync(
+                await Client.GetAsync(
                     $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json?key={key}");
 
 
