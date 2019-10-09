@@ -25,7 +25,7 @@ namespace WeatherRoutingBackend.Controllers
                     $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json?key={key}");
 
 
-            var jsonString = await response.Content.ReadAsStringAsync();
+            var jsonString = await response.Content.ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
             var adam =  JsonConvert.DeserializeObject<RouteResponse>(jsonString);
 
             var justPoints = adam.Routes.ToList()[0].Legs.ToList()[0].Points;
