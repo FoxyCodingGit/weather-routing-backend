@@ -15,14 +15,14 @@ namespace WeatherRoutingBackend.Controllers
         private static readonly HttpClient Client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
 
         [HttpGet]
-        [Route("{startLat}/{startLng}/{endLat}/{endLng}")]
-        public async Task<IEnumerable<Point>> GetRouteLegs(double startLat, double startLng, double endLat, double endLng)
+        [Route("{travelMode}/{startLat}/{startLng}/{endLat}/{endLng}")]
+        public async Task<PointsTimeAndDistance> GetRouteLegsAndTime(string travelMode, double startLat, double startLng, double endLat, double endLng)
         {
             var key = "dzTX2x3ocGZPLzhVGol51CtFKBX7hD63";
 
             HttpResponseMessage response =
                 await Client.GetAsync(
-                    $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json?key={key}");
+                    $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json?travelMode={travelMode}&key={key}");
 
 
             var jsonString = await response.Content.ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
@@ -30,7 +30,13 @@ namespace WeatherRoutingBackend.Controllers
 
             var justPoints = adam.Routes.ToList()[0].Legs.ToList()[0].Points;
 
-            return justPoints;
+
+            return new PointsTimeAndDistance
+            {
+                Points = justPoints,
+                TravelTimeInSeconds = adam.Routes.ToList()[0].Summary.TravelTimeInSeconds,
+                Distance = adam.Routes.ToList()[0].Summary.LengthInMeters
+            };
         }
     }
 }

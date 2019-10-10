@@ -43,7 +43,7 @@ namespace WeatherRoutingBackend.Controllers
 
             HttpResponseMessage response =
                 await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}");
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}"); // add unit in request.
 
 
             var jsonString =
@@ -51,6 +51,23 @@ namespace WeatherRoutingBackend.Controllers
                     .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
 
             return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Currently.PrecipProbability;
+        }
+
+        [HttpGet]
+        [Route("rainprob/minutely/{lat}/{lng}/{minuteWillReach}")]
+        public async Task<double> GetRainPercentageForPointWithinHourAway(double lat, double lng, int minuteWillReach)
+        {
+            const string key = "c2cae150bc54b0e5884a2e74a974152a";
+
+            HttpResponseMessage response =
+                await Client.GetAsync(
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}"); // add unit in request.
+
+            var jsonString =
+                await response.Content
+                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
+
+            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Minutely.Data.ToArray()[minuteWillReach].PrecipProbability;
         }
     }
 }
