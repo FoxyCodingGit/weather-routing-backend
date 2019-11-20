@@ -25,7 +25,7 @@ namespace WeatherRoutingBackend.Controllers
 
             HttpResponseMessage response =
                 await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}");
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si");
 
 
             var jsonString =
@@ -43,7 +43,7 @@ namespace WeatherRoutingBackend.Controllers
 
             HttpResponseMessage response =
                 await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}"); // add unit in request.
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
 
 
             var jsonString =
@@ -61,7 +61,7 @@ namespace WeatherRoutingBackend.Controllers
 
             HttpResponseMessage response =
                 await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}"); // add unit in request.
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
 
             var jsonString =
                 await response.Content
