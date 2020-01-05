@@ -69,5 +69,24 @@ namespace WeatherRoutingBackend.Controllers
 
             return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Minutely.Data;
         }
+
+        [HttpGet]
+        [Route("rain/currently/{lat}/{lng}")]
+        public async Task<Currently> GetCurrentWeatherForPoint(double lat, double lng)
+        {
+            const string key = "c2cae150bc54b0e5884a2e74a974152a";
+
+            HttpResponseMessage response =
+                await Client.GetAsync(
+                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
+
+            var jsonString =
+                await response.Content
+                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
+
+            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Currently;
+        }
+
+
     }
 }
