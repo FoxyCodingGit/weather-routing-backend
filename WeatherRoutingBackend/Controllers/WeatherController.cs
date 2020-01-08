@@ -71,7 +71,7 @@ namespace WeatherRoutingBackend.Controllers
         }
 
         [HttpGet]
-        [Route("rain/currently/{lat}/{lng}")]
+        [Route("currently/{lat}/{lng}")]
         public async Task<Currently> GetCurrentWeatherForPoint(double lat, double lng)
         {
             const string key = "c2cae150bc54b0e5884a2e74a974152a";
