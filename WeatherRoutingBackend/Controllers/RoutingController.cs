@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WeatherRoutingBackend.Model.Route;
@@ -10,6 +11,7 @@ namespace WeatherRoutingBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class RoutingController : ControllerBase
     {
         private static readonly HttpClient Client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
