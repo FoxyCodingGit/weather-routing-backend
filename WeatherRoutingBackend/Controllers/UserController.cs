@@ -30,15 +30,15 @@ namespace WeatherRoutingBackend.Controllers
         [HttpGet]
         public ActionResult GetToken()
         {
-            string securityKey = "efbweifgubWFrandOMwefinwepifbwefiwbfwe*nfiwefnweifnwef%Adasd_iscooool";
+            string securityKey = "ergrugfbfuiebfweufwefuasvefuefbaeuvfushfvsdfyef";
 
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
 
             SigningCredentials signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
             JwtSecurityToken token = new JwtSecurityToken(
-                issuer: "me",
-                audience: "you",
+                "me",
+                "you",
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentials
             );

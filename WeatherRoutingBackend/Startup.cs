@@ -23,7 +23,7 @@ namespace WeatherRoutingBackend
         public void ConfigureServices(IServiceCollection services)
         {
 
-            string securityKey = "efbweifgubWFrandOMwefinwepifbwefiwbfwe*nfiwefnweifnwef%Adasd_iscooool"; // only want in one place // move to appsettings.json
+            string securityKey = "ergrugfbfuiebfweufwefuasvefuefbaeuvfushfvsdfyef"; // only want in one place // move to appsettings.json
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
 
             services.AddCors(options => options.AddPolicy("LocalhostApiCorsPolicy", builder =>
