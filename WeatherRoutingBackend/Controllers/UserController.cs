@@ -13,7 +13,7 @@ namespace WeatherRoutingBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : ControllerBase // not child of base controller as auth is fine and no talking to other apis so its not needed.
     {
         private readonly string _securityKey;
 
