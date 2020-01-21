@@ -13,7 +13,7 @@ namespace WeatherRoutingBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase // not child of base controller as auth is fine and no talking to other apis so its not needed.
+    public class UserController : ControllerBase
     {
         private readonly string _securityKey;
 
@@ -24,7 +24,7 @@ namespace WeatherRoutingBackend.Controllers
 
         [Route("login")]
         [HttpPost]
-        public ActionResult Login(AuthoriseRequest loginDetails)
+        public ActionResult Login([FromBody]AuthoriseRequest loginDetails)
         {
             if (DoesUserExist(loginDetails.UserId, loginDetails.Password))
             {
