@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WeatherRoutingBackend.DataLayer;
 using WeatherRoutingBackend.Model.Request;
@@ -14,6 +15,13 @@ namespace WeatherRoutingBackend.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
+        private readonly string _securityKey;
+
+        public UserController(IConfiguration config)
+        {
+            _securityKey = config.GetValue<string>("AppSettings:SecurityKey");
+        }
+
         [Route("login")]
         [HttpPost]
         public ActionResult Login(AuthoriseRequest loginDetails)
@@ -35,20 +43,18 @@ namespace WeatherRoutingBackend.Controllers
             return students.Count > 0;
         }
 
-        private static string GenerateToken(string username)
+        private string GenerateToken(string username)
         {
-            string securityKey = "ergrugfbfuiebfweufwefuasvefuefbaeuvfushfvsdfyef";
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey));
 
-            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
-
-            SigningCredentials signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
+            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
            // var claims = new List<Claim>();
            // //claims.Add(new Claim("Username", username));
 
-            JwtSecurityToken token = new JwtSecurityToken(
-                "me",
-                "you",
+            var token = new JwtSecurityToken(
+                "WeatherRoutingBackend",
+                "WeatherRoutingFrontend",
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentials//,
                 //claims: claims

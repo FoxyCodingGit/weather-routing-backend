@@ -22,10 +22,7 @@ namespace WeatherRoutingBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            string securityKey = "ergrugfbfuiebfweufwefuasvefuefbaeuvfushfvsdfyef"; // only want in one place // move to appsettings.json
-            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
-
+           
             services.AddCors(options => options.AddPolicy("LocalhostApiCorsPolicy", builder =>
             {
                 builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
@@ -38,6 +35,12 @@ namespace WeatherRoutingBackend
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
 
+            AddAuthentication(services);
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("AppSettings:SecurityKey")));
             services
                 .AddAuthentication(JwtBearerDefaults
                     .AuthenticationScheme) // https://www.youtube.com/watch?v=7tgLuJ__ZKU
@@ -49,8 +52,8 @@ namespace WeatherRoutingBackend
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
 
-                        ValidIssuer = "me",
-                        ValidAudience = "you",
+                        ValidIssuer = "WeatherRoutingBackend",
+                        ValidAudience = "WeatherRoutingFrontend",
                         IssuerSigningKey = symmetricSecurityKey
                     };
                 });
