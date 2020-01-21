@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
+using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using WeatherRoutingBackend.DataLayer;
+using WeatherRoutingBackend.Model.Request;
 
 namespace WeatherRoutingBackend.Controllers
 {
@@ -12,20 +14,28 @@ namespace WeatherRoutingBackend.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-
-        private static readonly HttpClient
-            Client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
-
         [Route("login")]
-        [HttpGet]
-        public async Task<bool> Login(string username, string password)
+        [HttpPost]
+        public ActionResult Login(AuthoriseRequest loginDetails)
         {
-            return true;
+            if (DoesUserExist(loginDetails.UserId, loginDetails.Password))
+            {
+                return Ok(GenerateToken(loginDetails.UserId));
+            }
+            
+            throw new Exception("hello");
         }
 
-        [Route("Token")]
-        [HttpGet]
-        public ActionResult GetToken()
+        private static bool DoesUserExist(string username, string password)
+        {
+            var context = new DatabaseContext();
+            // sql injection attack. Need to check username and password for malicious code.
+            var students = context.Users.FromSqlInterpolated($"EXECUTE dbo.IsUserValid {username}, {password}").ToList(); 
+
+            return students.Count > 0;
+        }
+
+        private static string GenerateToken(string username)
         {
             string securityKey = "ergrugfbfuiebfweufwefuasvefuefbaeuvfushfvsdfyef";
 
@@ -33,14 +43,19 @@ namespace WeatherRoutingBackend.Controllers
 
             SigningCredentials signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
+           // var claims = new List<Claim>();
+           // //claims.Add(new Claim("Username", username));
+
             JwtSecurityToken token = new JwtSecurityToken(
                 "me",
                 "you",
                 expires: DateTime.Now.AddHours(1),
-                signingCredentials: signingCredentials
+                signingCredentials: signingCredentials//,
+                //claims: claims
             );
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
