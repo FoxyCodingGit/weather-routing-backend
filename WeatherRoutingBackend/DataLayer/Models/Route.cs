@@ -5,7 +5,7 @@
         public int RouteId { get; set; }
         public string Name { get; set; }
         public int ModeOfTransportId { get; set; }
-        public LatLngCoord StartLatLngCoordId { get; set; }
-        public LatLngCoord EndLatLngCoordId { get; set; }
+        public int StartLatLngCoordId { get; set; }
+        public int EndLatLngCoordId { get; set; }
     }
 }
