@@ -3,11 +3,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using WeatherRoutingBackend.Model.Weather;
 
 namespace WeatherRoutingBackend.Controllers
 {

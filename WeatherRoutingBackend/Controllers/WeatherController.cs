@@ -1,92 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using WeatherRoutingBackend.Model.Route;
+using Microsoft.Extensions.Configuration;
 using WeatherRoutingBackend.Model.Weather;
 
 namespace WeatherRoutingBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherController : ControllerBase
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class WeatherController : BaseController<WeatherResponse>
     {
-        private static readonly HttpClient
-            Client = new HttpClient(); // needs to only be init once, so need to move out into own base service.
+        private readonly string _weatherKey;
+
+        public WeatherController(IConfiguration config)
+        {
+            _weatherKey = config.GetValue<string>("AppSettings:WeatherKey");
+        }
 
         [HttpGet]
         [Route("{lat}/{lng}")]
         public async Task<WeatherResponse> GetWeatherForPoint(double lat, double lng)
         {
-            const string key = "c2cae150bc54b0e5884a2e74a974152a";
-
-            HttpResponseMessage response =
-                await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si");
-
-
-            var jsonString =
-                await response.Content
-                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
-
-            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString);
+            var url = $"https://api.darksky.net/forecast/{_weatherKey}/{lat},{lng}?units=si";
+            return await GetResponse(url);
         }
 
         [HttpGet]
         [Route("rainprob/{lat}/{lng}")]
         public async Task<double> GetRainPercentageForPoint(double lat, double lng)
         {
-            const string key = "c2cae150bc54b0e5884a2e74a974152a";
-
-            HttpResponseMessage response =
-                await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
-
-
-            var jsonString =
-                await response.Content
-                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
-
-            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Currently.PrecipProbability;
+            var url = $"https://api.darksky.net/forecast/{_weatherKey}/{lat},{lng}?units=si";
+            var weatherResponse = await GetResponse(url);
+            return weatherResponse.Currently.PrecipProbability;
         }
 
         [HttpGet]
         [Route("rain/minutely/{lat}/{lng}")]
         public async Task<IEnumerable<MinutelyRain>> GetMinutelyDataForPoint(double lat, double lng)
         {
-            const string key = "c2cae150bc54b0e5884a2e74a974152a";
-
-            HttpResponseMessage response =
-                await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
-
-            var jsonString =
-                await response.Content
-                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
-
-            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Minutely.Data;
+            var url = $"https://api.darksky.net/forecast/{_weatherKey}/{lat},{lng}?units=si";
+            var weatherResponse = await GetResponse(url);
+            return weatherResponse.Minutely.Data;
         }
 
         [HttpGet]
         [Route("currently/{lat}/{lng}")]
         public async Task<Currently> GetCurrentWeatherForPoint(double lat, double lng)
         {
-            const string key = "c2cae150bc54b0e5884a2e74a974152a";
-
-            HttpResponseMessage response =
-                await Client.GetAsync(
-                    $"https://api.darksky.net/forecast/{key}/{lat},{lng}?units=si"); // add unit in request.
-
-            var jsonString =
-                await response.Content
-                    .ReadAsStringAsync(); // need to catch errors here as if get so. Then just 500 is added by code below.
-
-            return JsonConvert.DeserializeObject<WeatherResponse>(jsonString).Currently;
+            var url = $"https://api.darksky.net/forecast/{_weatherKey}/{lat},{lng}?units=si";
+            var weatherResponse = await GetResponse(url);
+            return weatherResponse.Currently;
         }
-
-
     }
 }
