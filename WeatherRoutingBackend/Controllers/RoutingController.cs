@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -20,29 +21,30 @@ namespace WeatherRoutingBackend.Controllers
 
         [HttpGet]
         [Route("{travelMode}/{numberOfAlternates}/{startLat}/{startLng}/{endLat}/{endLng}")]
-        public async Task<PointsTimeAndDistance[]> GetRouteLegsAndTime(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
+        public async Task<List<PointsTimeAndDistance>> GetRoute(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
         {
-
             var url = $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json" +
                       $"?travelMode={travelMode}&maxAlternatives={numberOfAlternates}&key={_routingKey}";
-
             var routeResponse = await GetResponse(url);
 
-            PointsTimeAndDistance[] routes = new PointsTimeAndDistance[routeResponse.Routes.ToArray().Length];
+            return Thinergner(routeResponse);
+        }
 
-            for (int i = 0; i < routeResponse.Routes.ToArray().Length; i++)
+        private List<PointsTimeAndDistance> Thinergner(RouteResponse routeResponse)
+        {
+            var pointsTimeAndDistance = new List<PointsTimeAndDistance>();
+
+            foreach (var route in routeResponse.Routes)
             {
-                var justPoints = routeResponse.Routes.ToList()[i].Legs.ToList()[0].Points; // DONT KNOW HOW MAXALT WORKS. IS IT A ROUTE OR A LEG????
-
-                routes[i] = new PointsTimeAndDistance
+                pointsTimeAndDistance.Add(new PointsTimeAndDistance
                 {
-                    Points = justPoints,
-                    TravelTimeInSeconds = routeResponse.Routes.ToList()[i].Summary.TravelTimeInSeconds,
-                    Distance = routeResponse.Routes.ToList()[i].Summary.LengthInMeters
-                };
+                    Points = route.Legs[0].Points,
+                    TravelTimeInSeconds = route.Summary.TravelTimeInSeconds,
+                    Distance = route.Summary.LengthInMeters
+                });
             }
 
-            return routes;
+            return pointsTimeAndDistance;
         }
     }
 }

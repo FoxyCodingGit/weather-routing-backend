@@ -8,6 +8,5 @@ namespace WeatherRoutingBackend.Model.Route
         public int TravelTimeInSeconds { get; set; }
         public DateTime DepartureTime { get; set; }
         public DateTime ArrivalTime { get; set; }
-
     }
 }

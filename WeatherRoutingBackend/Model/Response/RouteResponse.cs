@@ -4,7 +4,6 @@ namespace WeatherRoutingBackend.Model.Route
 {
     public class RouteResponse
     {
-        //public string FormatVersion { get; set; }
-        public IEnumerable<Route> Routes { get; set; }
+        public List<Route> Routes { get; set; }
     }
 }
