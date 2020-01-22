@@ -27,10 +27,10 @@ namespace WeatherRoutingBackend.Controllers
                       $"?travelMode={travelMode}&maxAlternatives={numberOfAlternates}&key={_routingKey}";
             var routeResponse = await GetResponse(url);
 
-            return Thinergner(routeResponse);
+            return GenerateUsefulRouteResponse(routeResponse);
         }
 
-        private List<UsefulRouteResponse> Thinergner(RouteResponse routeResponse)
+        private static List<UsefulRouteResponse> GenerateUsefulRouteResponse(RouteResponse routeResponse)
         {
             var pointsTimeAndDistance = new List<UsefulRouteResponse>();
 
