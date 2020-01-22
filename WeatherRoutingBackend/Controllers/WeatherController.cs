@@ -18,14 +18,6 @@ namespace WeatherRoutingBackend.Controllers
         }
 
         [HttpGet]
-        [Route("{lat}/{lng}")]
-        public async Task<WeatherResponse> GetWeatherForPoint(double lat, double lng)
-        {
-            var url = $"https://api.darksky.net/forecast/{_weatherKey}/{lat},{lng}?units=si";
-            return await GetResponse(url);
-        }
-
-        [HttpGet]
         [Route("rainprob/{lat}/{lng}")]
         public async Task<double> GetRainPercentageForPoint(double lat, double lng)
         {
