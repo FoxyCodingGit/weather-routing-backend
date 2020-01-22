@@ -28,12 +28,12 @@ namespace WeatherRoutingBackend
             {
                 builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
             }));
+
             services.AddControllers();
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Weather Routing API", Version = "v1" });
             });
 
             AddAuthentication(services);
@@ -73,7 +73,7 @@ namespace WeatherRoutingBackend
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weather Routing V1");
                 c.RoutePrefix = string.Empty; // Swagger opens on app's root.
             });
 
