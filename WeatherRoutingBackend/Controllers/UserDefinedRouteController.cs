@@ -30,7 +30,7 @@ namespace WeatherRoutingBackend.Controllers
         {
             var context = new DatabaseContext();
             // sql injection attack. Need to check username and password for malicious code.
-            return context.Routes.FromSqlInterpolated($"EXECUTE dbo.CreateUserRoute {username} {routeName} {modeOfTransport} {startLat} {startLng} {endLat} {endLng}").ToList(); // TODO: unes call for list as only ever one. Figure out how to not need this bit of code.
+            return context.Routes.FromSqlInterpolated($"EXECUTE dbo.CreateUserRoute {username}, {routeName}, {modeOfTransport}, {startLat}, {startLng}, {endLat}, {endLng}").ToList(); // TODO: unes call for list as only ever one. Figure out how to not need this bit of code.
         }
 
         [HttpGet]
@@ -39,7 +39,7 @@ namespace WeatherRoutingBackend.Controllers
         {
             var context = new DatabaseContext();
             // sql injection attack. Need to check username and password for malicious code.
-            return context.Routes.FromSqlInterpolated($"EXECUTE dbo.DeleteRoute {username} {routeId}").ToList();
+            return context.Routes.FromSqlInterpolated($"EXECUTE dbo.DeleteRoute {username}, {routeId}").ToList();
         }
 
     }
