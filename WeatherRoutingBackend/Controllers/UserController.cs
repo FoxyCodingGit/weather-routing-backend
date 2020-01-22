@@ -16,10 +16,13 @@ namespace WeatherRoutingBackend.Controllers
     public class UserController : ControllerBase
     {
         private readonly string _securityKey;
+        private readonly DatabaseContext _context;
 
-        public UserController(IConfiguration config)
+        public UserController(IConfiguration config, DatabaseContext context)
         {
             _securityKey = config.GetValue<string>("AppSettings:SecurityKey");
+            _context = context;
+
         }
 
         [Route("login")]
@@ -34,11 +37,10 @@ namespace WeatherRoutingBackend.Controllers
             throw new Exception("hello");
         }
 
-        private static bool DoesUserExist(string username, string password)
+        private bool DoesUserExist(string username, string password)
         {
-            var context = new DatabaseContext();
             // sql injection attack. Need to check username and password for malicious code.
-            var students = context.Users.FromSqlInterpolated($"EXECUTE dbo.IsUserValid {username}, {password}").ToList(); 
+            var students = _context.Users.FromSqlInterpolated($"EXECUTE dbo.IsUserValid {username}, {password}").ToList(); 
 
             return students.Count > 0;
         }
