@@ -33,8 +33,7 @@ namespace WeatherRoutingBackend.Controllers
             {
                 return Ok(GenerateToken(loginDetails.UserId));
             }
-            
-            throw new Exception("hello");
+            return StatusCode(401);
         }
 
         private bool DoesUserExist(string username, string password)

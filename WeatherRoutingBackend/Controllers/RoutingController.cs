@@ -18,7 +18,6 @@ namespace WeatherRoutingBackend.Controllers
             _routingKey = config.GetValue<string>("AppSettings:RoutingKey");
         }
 
-
         [HttpGet]
         [Route("{travelMode}/{numberOfAlternates}/{startLat}/{startLng}/{endLat}/{endLng}")]
         public async Task<List<UsefulRouteResponse>> GetRoute(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
