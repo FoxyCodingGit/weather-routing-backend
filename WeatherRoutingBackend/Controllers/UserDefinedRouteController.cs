@@ -24,7 +24,7 @@ namespace WeatherRoutingBackend.Controllers
 
         [HttpGet]
         [Route("get/{username}")]
-        public async Task<List<Route>> GetUserRoutes(string username)
+        public List<Route> GetUserRoutes(string username)
         {
             // sql injection attack. Need to check username and password for malicious code.
             return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.GetUserRoutes {username}").ToList();
@@ -32,19 +32,19 @@ namespace WeatherRoutingBackend.Controllers
 
         [HttpGet]
         [Route("create/{username}/{routeName}/{modeOfTransport}/{startLat}/{startLng}/{endLat}/{endLng}")]
-        public async Task<List<Route>> CreateUserRoute(string username, string routeName, string modeOfTransport, double startLat, double startLng, double endLat, double endLng)
+        public List<Route> CreateUserRoute(string username, string routeName, string modeOfTransport, double startLat, double startLng, double endLat, double endLng)
         {
             // sql injection attack. Need to check username and password for malicious code.
-            return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.CreateUserRoute {username}, {routeName}, {modeOfTransport}, {startLat}, {startLng}, {endLat}, {endLng}").ToList(); // TODO: unes call for list as only ever one. Figure out how to not need this bit of code.
+            return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.CreateUserRoute {username}, {routeName}, {modeOfTransport}, {startLat}, {startLng}, {endLat}, {endLng}").ToList();
+            // TODO: unes call for list as only ever one. Figure out how to not need this bit of code.
         }
 
         [HttpGet]
         [Route("delete/{username}/{routeId}")]
-        public async Task<List<Route>> DeleteUserRoute(string username, int routeId)
+        public List<Route> DeleteUserRoute(string username, int routeId)
         {
             // sql injection attack. Need to check username and password for malicious code.
             return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.DeleteRoute {username}, {routeId}").ToList();
         }
-
     }
 }
