@@ -2,7 +2,7 @@
 
 namespace WeatherRoutingBackend.Model.Route
 {
-    public class PointsTimeAndDistance
+    public class UsefulRouteResponse
     {
         public IEnumerable<Point> Points { get; set; }
         public int TravelTimeInSeconds { get; set; }

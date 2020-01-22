@@ -21,7 +21,7 @@ namespace WeatherRoutingBackend.Controllers
 
         [HttpGet]
         [Route("{travelMode}/{numberOfAlternates}/{startLat}/{startLng}/{endLat}/{endLng}")]
-        public async Task<List<PointsTimeAndDistance>> GetRoute(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
+        public async Task<List<UsefulRouteResponse>> GetRoute(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
         {
             var url = $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json" +
                       $"?travelMode={travelMode}&maxAlternatives={numberOfAlternates}&key={_routingKey}";
@@ -30,13 +30,13 @@ namespace WeatherRoutingBackend.Controllers
             return Thinergner(routeResponse);
         }
 
-        private List<PointsTimeAndDistance> Thinergner(RouteResponse routeResponse)
+        private List<UsefulRouteResponse> Thinergner(RouteResponse routeResponse)
         {
-            var pointsTimeAndDistance = new List<PointsTimeAndDistance>();
+            var pointsTimeAndDistance = new List<UsefulRouteResponse>();
 
             foreach (var route in routeResponse.Routes)
             {
-                pointsTimeAndDistance.Add(new PointsTimeAndDistance
+                pointsTimeAndDistance.Add(new UsefulRouteResponse
                 {
                     Points = route.Legs[0].Points,
                     TravelTimeInSeconds = route.Summary.TravelTimeInSeconds,
