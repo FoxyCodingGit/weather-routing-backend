@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,15 +52,14 @@ namespace WeatherRoutingBackend.Controllers
 
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
-           // var claims = new List<Claim>();
-           // //claims.Add(new Claim("Username", username));
+            var claims = new List<Claim> { new Claim("Username", username) };
 
             var token = new JwtSecurityToken(
                 "WeatherRoutingBackend",
                 "WeatherRoutingFrontend",
                 expires: DateTime.Now.AddHours(1),
-                signingCredentials: signingCredentials//,
-                //claims: claims
+                signingCredentials: signingCredentials,
+                claims: claims
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);

@@ -23,26 +23,28 @@ namespace WeatherRoutingBackend.Controllers
         }
 
         [HttpGet]
-        [Route("get/{username}")]
-        public List<Route> GetUserRoutes(string username)
+        [Route("get")]
+        public List<Route> GetUserRoutes()
         {
-            // sql injection attack. Need to check username and password for malicious code.
+            var username = User.FindFirst("Username").Value;
             return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.GetUserRoutes {username}").ToList();
         }
 
         [HttpGet]
-        [Route("create/{username}/{routeName}/{modeOfTransport}/{startLat}/{startLng}/{endLat}/{endLng}")]
-        public List<Route> CreateUserRoute(string username, string routeName, string modeOfTransport, double startLat, double startLng, double endLat, double endLng)
+        [Route("create/{routeName}/{modeOfTransport}/{startLat}/{startLng}/{endLat}/{endLng}")]
+        public List<Route> CreateUserRoute(string routeName, string modeOfTransport, double startLat, double startLng, double endLat, double endLng)
         {
+            var username = User.FindFirst("Username").Value;
             // sql injection attack. Need to check username and password for malicious code.
             return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.CreateUserRoute {username}, {routeName}, {modeOfTransport}, {startLat}, {startLng}, {endLat}, {endLng}").ToList();
             // TODO: unes call for list as only ever one. Figure out how to not need this bit of code.
         }
 
         [HttpGet]
-        [Route("delete/{username}/{routeId}")]
-        public List<Route> DeleteUserRoute(string username, int routeId)
+        [Route("delete/{routeId}")]
+        public List<Route> DeleteUserRoute(int routeId)
         {
+            var username = User.FindFirst("Username").Value;
             // sql injection attack. Need to check username and password for malicious code.
             return _context.Routes.FromSqlInterpolated($"EXECUTE dbo.DeleteRoute {username}, {routeId}").ToList();
         }
