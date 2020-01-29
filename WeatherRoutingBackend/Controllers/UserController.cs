@@ -33,7 +33,7 @@ namespace WeatherRoutingBackend.Controllers
         {
             if (DoesUserExist(loginDetails.UserId, loginDetails.Password))
             {
-                return Ok(GenerateToken(loginDetails.UserId));
+                return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
             }
             return Unauthorized();
         }
