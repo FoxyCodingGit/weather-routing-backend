@@ -31,6 +31,14 @@ namespace WeatherRoutingBackend.Controllers
         }
 
         [HttpGet]
+        [Route("get/readable")]
+        public List<ReadableRoute> GetReadableUserRoutes()
+        {
+            var username = User.FindFirst("Username").Value;
+            return _context.ReadableRoutes.FromSqlInterpolated($"EXECUTE dbo.GetReadableUserRoutes {username}").ToList();
+        }
+
+        [HttpGet]
         [Route("create/{routeName}/{modeOfTransport}/{startLat}/{startLng}/{endLat}/{endLng}")]
         public List<Route> CreateUserRoute(string routeName, string modeOfTransport, double startLat, double startLng, double endLat, double endLng)
         {
