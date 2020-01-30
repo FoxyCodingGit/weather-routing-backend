@@ -23,7 +23,7 @@ namespace WeatherRoutingBackend.Controllers
         public async Task<List<UsefulRouteResponse>> GetRoute(string travelMode, int numberOfAlternates, double startLat, double startLng, double endLat, double endLng)
         {
             var url = $"https://api.tomtom.com/routing/1/calculateRoute/{startLat},{startLng}:{endLat},{endLng}/json" +
-                      $"?travelMode={travelMode}&maxAlternatives={numberOfAlternates}&key={_routingKey}";
+                      $"?travelMode={travelMode.ToLower()}&maxAlternatives={numberOfAlternates}&key={_routingKey}";
             var routeResponse = await GetResponse(url);
 
             return GenerateUsefulRouteResponse(routeResponse);
