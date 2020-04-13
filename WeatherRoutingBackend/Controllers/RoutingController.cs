@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using WeatherRoutingBackend.Model.Response;
 using WeatherRoutingBackend.Model.Route;
 
 namespace WeatherRoutingBackend.Controllers
@@ -12,10 +15,12 @@ namespace WeatherRoutingBackend.Controllers
     public class RoutingController : BaseController<RouteResponse>
     {
         private readonly string _routingKey;
+        private readonly string _googleKey;
 
         public RoutingController(IConfiguration config)
         {
             _routingKey = config.GetValue<string>("AppSettings:RoutingKey");
+            _googleKey = config.GetValue<string>("AppSettings:GoogleKey");
         }
 
         [HttpGet]
@@ -28,6 +33,31 @@ namespace WeatherRoutingBackend.Controllers
 
             return GenerateUsefulRouteResponse(routeResponse);
         }
+
+        [HttpPost]
+        [Route("/elevation")]
+        public async Task<ElevationResponse> GetLatitudeofPoints(Location[] locations)
+        {
+            var url = "https://maps.googleapis.com/maps/api/elevation/json?locations=";
+
+            foreach(Location location in locations)
+            {
+                url += $"{location.Lat},{location.Lng}|";
+            }
+            url = url.Remove(url.Length - 1);
+
+            url += $"&key={_googleKey}";
+
+            HttpClient client = new HttpClient();
+
+            var response = await client.GetAsync(url);
+
+            // need to catch errors here as if get so. Then just 500 is added by code below.
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<ElevationResponse>(jsonString);
+        }
+
 
         private static List<UsefulRouteResponse> GenerateUsefulRouteResponse(RouteResponse routeResponse)
         {
