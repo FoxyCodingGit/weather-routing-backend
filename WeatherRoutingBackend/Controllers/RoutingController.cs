@@ -35,7 +35,7 @@ namespace WeatherRoutingBackend.Controllers
         }
 
         [HttpPost]
-        [Route("/elevation")]
+        [Route("elevation")]
         public async Task<ElevationResponse> GetLatitudeofPoints(Location[] locations)
         {
             var url = "https://maps.googleapis.com/maps/api/elevation/json?locations=";
