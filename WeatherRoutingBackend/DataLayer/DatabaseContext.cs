@@ -8,6 +8,7 @@ namespace WeatherRoutingBackend.DataLayer
         public DbSet<Route> Routes { get; set; }
         public DbSet<ReadableRoute> ReadableRoutes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<SaltModel> Salt { get; set; }
 
         public DatabaseContext(DbContextOptions options): base(options) { }
     }

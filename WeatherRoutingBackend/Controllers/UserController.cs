@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,11 +33,41 @@ namespace WeatherRoutingBackend.Controllers
         [HttpPost]
         public ActionResult Login([FromBody]AuthoriseRequest loginDetails)
         {
-            if (DoesUserExist(loginDetails.UserId, loginDetails.Password))
+            string salt = _context.Salt.FromSqlInterpolated($"EXECUTE dbo.GetUserSalt {loginDetails.UserId}").ToList().ElementAt(0).Salt;
+            string hashed = GenerateHash(loginDetails.Password, Convert.FromBase64String(salt));
+
+            if (DoesUserExist(loginDetails.UserId, hashed))
             {
                 return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
             }
             return Unauthorized();
+        }
+
+        [Route("createUser")]
+        [HttpPost]
+        public void CreateUser(string username, string password)
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            string hashed = GenerateHash(password, salt);
+
+            _ = _context.Database.ExecuteSqlInterpolated($"EXECUTE dbo.CreateUser {username}, {hashed}, {Convert.ToBase64String(salt)}"); // this is used for no return values.
+        }
+
+        private string GenerateHash(string password, byte[] salt)
+        {
+            return Convert.ToBase64String(
+                KeyDerivation.Pbkdf2(
+                    password: password,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA1,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8)
+                );
         }
 
         private bool DoesUserExist(string username, string password)
