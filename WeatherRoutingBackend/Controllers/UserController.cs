@@ -43,9 +43,9 @@ namespace WeatherRoutingBackend.Controllers
             return Unauthorized();
         }
 
-        [Route("createUser")]
+        [Route("register")]
         [HttpPost]
-        public void CreateUser(string username, string password)
+        public ActionResult Register([FromBody]AuthoriseRequest loginDetails)
         {
             byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
@@ -53,9 +53,15 @@ namespace WeatherRoutingBackend.Controllers
                 rng.GetBytes(salt);
             }
 
-            string hashed = GenerateHash(password, salt);
+            string hashed = GenerateHash(loginDetails.Password, salt);
 
-            _ = _context.Database.ExecuteSqlInterpolated($"EXECUTE dbo.CreateUser {username}, {hashed}, {Convert.ToBase64String(salt)}"); // this is used for no return values.
+            _ = _context.Database.ExecuteSqlInterpolated($"EXECUTE dbo.CreateUser {loginDetails.UserId}, {hashed}, {Convert.ToBase64String(salt)}"); // this is used for no return values.
+
+            if (DoesUserExist(loginDetails.UserId, hashed))
+            {
+                return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
+            }
+            return Unauthorized();
         }
 
         private string GenerateHash(string password, byte[] salt)
@@ -89,7 +95,7 @@ namespace WeatherRoutingBackend.Controllers
             var token = new JwtSecurityToken(
                 "WeatherRoutingBackend",
                 "WeatherRoutingFrontend",
-                //expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentials,
                 claims: claims
             );
