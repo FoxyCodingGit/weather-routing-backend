@@ -33,14 +33,22 @@ namespace WeatherRoutingBackend.Controllers
         [HttpPost]
         public ActionResult Login([FromBody]AuthoriseRequest loginDetails)
         {
-            string salt = _context.Salt.FromSqlInterpolated($"EXECUTE dbo.GetUserSalt {loginDetails.UserId}").ToList().ElementAt(0).Salt;
+            string salt;
+            try
+            {
+                salt = _context.Salt.FromSqlInterpolated($"EXECUTE dbo.GetUserSalt {loginDetails.UserId}").ToList().ElementAt(0).Salt;
+            } catch
+            {
+                return Unauthorized($"User \"{loginDetails.UserId}\" does not exist");
+            }
+
             string hashed = GenerateHash(loginDetails.Password, Convert.FromBase64String(salt));
 
-            if (DoesUserExist(loginDetails.UserId, hashed))
+            if (AreCredentialsCorrect(loginDetails.UserId, hashed))
             {
                 return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
             }
-            return Unauthorized();
+            return Unauthorized("Credentials are wrong");
         }
 
         [Route("register")]
@@ -55,13 +63,15 @@ namespace WeatherRoutingBackend.Controllers
 
             string hashed = GenerateHash(loginDetails.Password, salt);
 
-            _ = _context.Database.ExecuteSqlInterpolated($"EXECUTE dbo.CreateUser {loginDetails.UserId}, {hashed}, {Convert.ToBase64String(salt)}"); // this is used for no return values.
-
-            if (DoesUserExist(loginDetails.UserId, hashed))
+            try
             {
-                return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
+                _ = _context.Database.ExecuteSqlInterpolated($"EXECUTE dbo.CreateUser {loginDetails.UserId}, {hashed}, {Convert.ToBase64String(salt)}"); // this is used for no return values.
+            } catch
+            {
+                return BadRequest($"Username \"{loginDetails.UserId}\" has already been taken");
             }
-            return Unauthorized();
+
+            return Ok("\"" + GenerateToken(loginDetails.UserId) + "\"");
         }
 
         private string GenerateHash(string password, byte[] salt)
@@ -76,7 +86,7 @@ namespace WeatherRoutingBackend.Controllers
                 );
         }
 
-        private bool DoesUserExist(string username, string password)
+        private bool AreCredentialsCorrect(string username, string password)
         {
             // sql injection attack. Need to check username and password for malicious code.
             var students = _context.Users.FromSqlInterpolated($"EXECUTE dbo.IsUserValid {username}, {password}").ToList(); 
