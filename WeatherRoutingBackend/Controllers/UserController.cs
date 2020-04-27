@@ -89,7 +89,7 @@ namespace WeatherRoutingBackend.Controllers
             var token = new JwtSecurityToken(
                 "WeatherRoutingBackend",
                 "WeatherRoutingFrontend",
-                expires: DateTime.Now.AddHours(1),
+                //expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentials,
                 claims: claims
             );
