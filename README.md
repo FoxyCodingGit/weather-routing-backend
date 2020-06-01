@@ -6,7 +6,7 @@ I have set up swagger on this application. What this means is that there is a qu
  
 ![Picture of Swagger GUI](swagger.png)
 
-## Routing controller
+## Routing Controller
 The routing controller is in charge of communicating with the TOMTOM api and getting routes for an inputted latitude and longitude. The second responsibility is to get the elevation of a route, this is done by passing a list of the latitude and longitude value of the route to the google elevation API, returning an evaluation value on each pair.
 
 ## User Controller
@@ -27,8 +27,8 @@ This controller controls the communication between the frontend and the weather 
 ## Entity Framework
 Entity framework is an object database mapper for .NET applications. This is in charge of the database connection and also the retrieval of objects from the database. To access the database, I use entity frameworks to call stored procedures. These stored procedures then have their results mapped to the objects defined in the Entity Framework. 
 
-## Base controller inheritance
+## Base controller Inheritance
 There is inheritance present where most controllers inherit from base controller. This is done to remove duplicate get response code. It is also used so that only one HTTPClient object is created which is recommended.
 
-## Appsettings.json (holding of secret keys)
+## Appsettings.json (Holding of Secret Keys)
 This holds the keys for the APIs I am contacting. It also holds the security key for the hash generation. These are not secure to an industry standard however is good enough for this project. What I could have used was Active Directory however I wanted to get marks for implementing my knowledge of database protection such as the hashing and salting of passwords. 
