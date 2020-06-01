@@ -22,9 +22,7 @@ This controller deals with all the user defined routes (routes that have been fa
 This controller holds the retrieval of all routes favourited by the user. Allows the creation of a route to the database (favouriting) and the deletion of a route (unfavouriting or deleting).
 
 ## Weather Controller
-This controller controls the communication between the frontend and the weather information provider Dark Sky.
-
-There are two calls. One to retrieve the minutely data and the other to retrieve back the current weather information.
+This controller controls the communication between the frontend and the weather information provider Dark Sky. There are two calls. One to retrieve the minutely data and the other to retrieve back the current weather information.
 
 ## Entity Framework
 Entity framework is an object database mapper for .NET applications. This is in charge of the database connection and also the retrieval of objects from the database. To access the database, I use entity frameworks to call stored procedures. These stored procedures then have their results mapped to the objects defined in the Entity Framework. 
