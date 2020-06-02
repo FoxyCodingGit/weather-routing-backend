@@ -18,7 +18,6 @@ namespace XUnitBackendTestingExample
             List<UsefulRouteResponse> actualResult = RoutingController.GenerateUsefulRouteResponse(OldRouteFormat);
 
             // Assert
-
             Assert.Equal(Route1ExpectedOutcome[0].TravelTimeInSeconds, actualResult[0].TravelTimeInSeconds);
             Assert.Equal(Route1ExpectedOutcome[0].Distance, actualResult[0].Distance);
 
