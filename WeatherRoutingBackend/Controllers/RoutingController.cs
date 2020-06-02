@@ -59,7 +59,7 @@ namespace WeatherRoutingBackend.Controllers
         }
 
 
-        private static List<UsefulRouteResponse> GenerateUsefulRouteResponse(RouteResponse routeResponse)
+        public static List<UsefulRouteResponse> GenerateUsefulRouteResponse(RouteResponse routeResponse)
         {
             var pointsTimeAndDistance = new List<UsefulRouteResponse>();
 
